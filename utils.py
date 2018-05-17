@@ -1,22 +1,11 @@
 import pandas as pd
 import numpy as np
-from pprint import pprint
-import time
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import seaborn as sns
-import re
 import pandas as pd
 import os
 from pandas import datetime
-import seaborn as sns
+
 import matplotlib.pyplot as plt
-import numpy as np
-import time
-from keras.layers.core import Dense, Activation, Dropout
-from keras.layers.recurrent import LSTM
-from keras.models import Sequential
-from numpy import arange, sin, pi, random
+
 
 def ReadDatatime(File):
     data=pd.read_csv(File)
