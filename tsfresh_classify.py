@@ -9,11 +9,11 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import StandardScaler
-import matplotlib
+# import matplotlib
 import matplotlib.pyplot as plt
 import os
 
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 
 
 def split_data(x, y, split):
@@ -181,10 +181,10 @@ for KPI_ID_name in KPI_ID:
     print(cl_split.score(X_train_, y_train_))
     print(classification_report(y_train_, prediction))
 
-    fig, axes = plt.subplots(nrows=2, ncols=1)
-    pd.DataFrame(y_train_).plot(ax=axes[0]);axes[0].set_title('label')
-    pd.DataFrame(prediction).plot(ax=axes[1]);axes[1].set_title('predict')
-    plt.savefig(os.path.join(output_path, KPI_ID[index] + '_label_prediction.png'))
+    # fig, axes = plt.subplots(nrows=2, ncols=1)
+    # pd.DataFrame(y_train_).plot(ax=axes[0]);axes[0].set_title('label')
+    # pd.DataFrame(prediction).plot(ax=axes[1]);axes[1].set_title('predict')
+    # plt.savefig(os.path.join(output_path, KPI_ID[index] + '_label_prediction.png'))
 
     # prediction ##################################----------------------------
 
@@ -230,10 +230,10 @@ for KPI_ID_name in KPI_ID:
     full_result.append(full_ts_result, ignore_index=True)
     split_result.append(split_ts_result, ignore_index=True)
 
-    fig2, axes = plt.subplots(nrows=2, ncols=1)
-    pd.DataFrame(full_predict).plot(ax=axes[0]);axes[0].set_title('full predict')
-    pd.DataFrame(split_predict).plot(ax=axes[1]);axes[1].set_title('split predict')
-    plt.savefig(os.path.join(output_path, KPI_ID[index] + '_full_split_prediction.png'))
+    # fig2, axes = plt.subplots(nrows=2, ncols=1)
+    # pd.DataFrame(full_predict).plot(ax=axes[0]);axes[0].set_title('full predict')
+    # pd.DataFrame(split_predict).plot(ax=axes[1]);axes[1].set_title('split predict')
+    # plt.savefig(os.path.join(output_path, KPI_ID[index] + '_full_split_prediction.png'))
 
 full_result.to_csv(full_result_path, index=False)
 split_result.to_csv(split_result_path, index=False)
