@@ -9,8 +9,11 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import StandardScaler
+import matplotlib
 import matplotlib.pyplot as plt
 import os
+
+matplotlib.use('Agg')
 
 
 def split_data(x, y, split):
