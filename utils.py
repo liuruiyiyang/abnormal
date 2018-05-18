@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import pandas as pd
 import os
@@ -34,5 +33,7 @@ def plot_ts_label(index,KPI_LIST,KPI_ID):
     pd.DataFrame(KPI_LIST[index])['label'].plot(ax=axes[1]);axes[1].set_title(KPI_ID[index] + 'label')
     plt.show()
 
-def ReadTimeStamp(File):
-    data=pd.read_csv(File)
+
+# def ReadTimeStamp(File):
+#     data=pd.read_csv(File)
+

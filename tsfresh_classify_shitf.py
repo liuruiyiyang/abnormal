@@ -59,9 +59,9 @@ def save(result_path, ts_result):
         ts_result.to_csv(result_path, header=True, index=False)
 
 
-window = 6
+window = 8
 # score_threshold = 0.997
-# KPI_ID_name = '76f4550c43334374' 8a20c229e9860d0c
+# KPI_ID_name = '76f4550c43334374'
 train_data_path = 'resources/train.csv'
 test_data_path = 'resources/test.csv'
 augment_data_path = 'resources/augment_data/'
@@ -107,7 +107,7 @@ KPI_LIST_test, KPI_ID_test = SplitKPIList(test_data_raw)
 
 KPI_ID_e = ['07927a9a18fa19ae', '76f4550c43334374']
 
-for KPI_ID_name in KPI_ID_e:
+for KPI_ID_name in KPI_ID:
 
     print("current KPI ID:", KPI_ID_name)
 
@@ -115,11 +115,11 @@ for KPI_ID_name in KPI_ID_e:
     print("current KPI ID index:", index, "/", len(KPI_ID))
     filtered_feature_name_list = []
 
-    y = KPI_LIST[index].pop('label')
-    y_shift = y
-    y = y.values[window:]
-    y = pd.Series(y)
+    # y = KPI_LIST[index].pop('label')
+    # y = y.values[window:]
+    # y = pd.Series(y)
 
+    y_shift = KPI_LIST[index].pop('label')
     print("y length:", len(y_shift))
     y_shift = y_shift.values[int(window/2):len(y_shift)-int(window/2)]
     print("y_shift length:", len(y_shift))
@@ -161,7 +161,7 @@ for KPI_ID_name in KPI_ID_e:
             )
 
         print("augment_data:\n", augment_data)
-        ts_feature = extract_relevant_features(augment_data, y, column_id="KPI ID", column_sort="timestamp")
+        ts_feature = extract_relevant_features(augment_data, y_shift, column_id="KPI ID", column_sort="timestamp")
         ts_feature.dropna(axis=1, inplace=True)
         ts_feature = pd.DataFrame(ts_feature)
         feature_name_list_df = pd.DataFrame(ts_feature.iloc[[0]])
@@ -177,7 +177,7 @@ for KPI_ID_name in KPI_ID_e:
         # X_train_df = pd.DataFrame(X_train)
         # X_train_df.to_csv("resources/ts_feature_" + "window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv")
 
-    y_train = y.values
+    # y_train = y.values
     y_train_shift = y_shift.values
 
     # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=.3)
@@ -187,16 +187,16 @@ for KPI_ID_name in KPI_ID_e:
     print("X_train shape:")
     print(X_train.shape)
     print("y_train length:")
-    print(len(y_train))
+    # print(len(y_train))
 
     X_train_ = X_train
-    y_train_ = y_train
+    # y_train_ = y_train
 
     y_train_shift_ = y_train_shift
 
     score = 0
     # cl_split = DecisionTreeClassifier()
-    cl_full = DecisionTreeClassifier()
+    # cl_full = DecisionTreeClassifier()
     cl_shift = DecisionTreeClassifier()
 
     # while score < score_threshold:
@@ -208,7 +208,7 @@ for KPI_ID_name in KPI_ID_e:
     #     print(cl_split.score(X_test, y_test))
     #     print(classification_report(y_test, prediction))
 
-    cl_full.fit(X_train_, y_train_)
+    # cl_full.fit(X_train_, y_train_)
     cl_shift.fit(X_train_, y_train_shift_)
 
     # prediction = cl_split.predict(X_train_)
@@ -261,16 +261,16 @@ for KPI_ID_name in KPI_ID_e:
 
     print("X_train.shape:", X_train.shape)
 
-    full_predict = padding_y(cl_full.predict(X_train), window)
+    # full_predict = padding_y(cl_full.predict(X_train), window)
     shift_predict = padding_shift_y(cl_shift.predict(X_train), window)
     # split_predict = padding_y(cl_split.predict(X_train), window)
-    full_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, full_predict)
+    # full_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, full_predict)
     shift_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, shift_predict)
-    print("full_ts_result:", ts_KPI_ID_test.iloc[[0]])
-    print(full_ts_result)
+    print("shift_ts_result:", ts_KPI_ID_test.iloc[[0]])
+    print(shift_ts_result)
     # split_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, split_predict)
 
-    save(result_path=full_result_path, ts_result=full_ts_result)
+    # save(result_path=full_result_path, ts_result=full_ts_result)
     save(result_path=split_result_path, ts_result=shift_ts_result)
 
     # fig2, axes = plt.subplots(nrows=2, ncols=1)
