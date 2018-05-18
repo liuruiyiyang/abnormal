@@ -117,7 +117,7 @@ for KPI_ID_name in KPI_ID:
         filtered_feature_name_list = head_df.columns.values.tolist()
         print("filtered_feature_name_list:", filtered_feature_name_list)
         print(len(filtered_feature_name_list))
-        del X_train_df['Unnamed: 0']
+        del X_train_df['id']
         X_train = X_train_df.values
         sc.fit(X_train)
         X_train = sc.transform(X_train)
@@ -193,7 +193,7 @@ for KPI_ID_name in KPI_ID:
 
     if os.path.isfile("resources/test_feature/ts_feature_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv"):
         X_train_df = pd.read_csv("resources/test_feature/ts_feature_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
-        del X_train_df['Unnamed: 0']
+        del X_train_df['id']
         X_train = X_train_df.values
         X_train = sc.transform(X_train)
     else:
@@ -225,16 +225,20 @@ for KPI_ID_name in KPI_ID:
     full_predict = padding_y(cl_full.predict(X_train), window)
     # split_predict = padding_y(cl_split.predict(X_train), window)
     full_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, full_predict)
+    print("full_ts_result:", ts_KPI_ID_test.iloc[[0]])
+    print(full_ts_result)
     # split_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, split_predict)
 
-    full_result.append(full_ts_result, ignore_index=True)
-    # split_result.append(split_ts_result, ignore_index=True)
+    if os.path.isfile(full_result_path):
+        with open(full_result_path, 'a') as f:
+            full_ts_result.to_csv(f, header=False, index=False)
+    else:
+        full_ts_result.to_csv(full_result_path, header=True, index=False)
 
     # fig2, axes = plt.subplots(nrows=2, ncols=1)
     # pd.DataFrame(full_predict).plot(ax=axes[0]);axes[0].set_title('full predict')
     # pd.DataFrame(split_predict).plot(ax=axes[1]);axes[1].set_title('split predict')
     # plt.savefig(os.path.join(output_path, KPI_ID[index] + '_full_split_prediction.png'))
 
-full_result.to_csv(full_result_path, index=False)
 print("finish !!!")
 # split_result.to_csv(split_result_path, index=False)

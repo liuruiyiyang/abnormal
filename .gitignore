@@ -1,5 +1,7 @@
 **/*.iml
 **/.idea/
+**/.idea/*
 **/*.log
 # Apple OS X related
 **/.DS_Store
+**/resources/*
