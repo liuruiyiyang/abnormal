@@ -236,4 +236,5 @@ for KPI_ID_name in KPI_ID:
     # plt.savefig(os.path.join(output_path, KPI_ID[index] + '_full_split_prediction.png'))
 
 full_result.to_csv(full_result_path, index=False)
+print("finish !!!")
 # split_result.to_csv(split_result_path, index=False)
