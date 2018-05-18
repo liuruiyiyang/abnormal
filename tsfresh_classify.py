@@ -42,8 +42,8 @@ def get_result(ts_KPI_ID_test, ts_timestamp, predict):
 
 
 window = 6
-score_threshold = 0.997
-# KPI_ID_name = '07927a9a18fa19ae'
+# score_threshold = 0.997
+# KPI_ID_name = '76f4550c43334374'
 train_data_path = 'resources/train.csv'
 test_data_path = 'resources/test.csv'
 full_result_path = 'resources/result/prediction.csv'
@@ -161,23 +161,23 @@ for KPI_ID_name in KPI_ID:
     y_train_ = y_train
 
     score = 0
-    cl_split = DecisionTreeClassifier()
+    # cl_split = DecisionTreeClassifier()
     cl_full = DecisionTreeClassifier()
 
-    while score < score_threshold:
-        X_train, X_test, y_train, y_test = train_test_split(X_train_, y_train_, test_size=.3)
-        cl_split = DecisionTreeClassifier()
-        cl_split.fit(X_train, y_train)
-        prediction = cl_split.predict(X_test)
-        score = cl_split.score(X_test, y_test)
-        print(cl_split.score(X_test, y_test))
-        print(classification_report(y_test, prediction))
+    # while score < score_threshold:
+    #     X_train, X_test, y_train, y_test = train_test_split(X_train_, y_train_, test_size=.3)
+    #     cl_split = DecisionTreeClassifier()
+    #     cl_split.fit(X_train, y_train)
+    #     prediction = cl_split.predict(X_test)
+    #     score = cl_split.score(X_test, y_test)
+    #     print(cl_split.score(X_test, y_test))
+    #     print(classification_report(y_test, prediction))
 
     cl_full.fit(X_train_, y_train_)
 
-    prediction = cl_split.predict(X_train_)
-    print(cl_split.score(X_train_, y_train_))
-    print(classification_report(y_train_, prediction))
+    # prediction = cl_split.predict(X_train_)
+    # print(cl_split.score(X_train_, y_train_))
+    # print(classification_report(y_train_, prediction))
 
     # fig, axes = plt.subplots(nrows=2, ncols=1)
     # pd.DataFrame(y_train_).plot(ax=axes[0]);axes[0].set_title('label')
@@ -223,12 +223,12 @@ for KPI_ID_name in KPI_ID:
     print("X_train.shape:", X_train.shape)
 
     full_predict = padding_y(cl_full.predict(X_train), window)
-    split_predict = padding_y(cl_split.predict(X_train), window)
+    # split_predict = padding_y(cl_split.predict(X_train), window)
     full_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, full_predict)
-    split_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, split_predict)
+    # split_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, split_predict)
 
     full_result.append(full_ts_result, ignore_index=True)
-    split_result.append(split_ts_result, ignore_index=True)
+    # split_result.append(split_ts_result, ignore_index=True)
 
     # fig2, axes = plt.subplots(nrows=2, ncols=1)
     # pd.DataFrame(full_predict).plot(ax=axes[0]);axes[0].set_title('full predict')
@@ -236,4 +236,4 @@ for KPI_ID_name in KPI_ID:
     # plt.savefig(os.path.join(output_path, KPI_ID[index] + '_full_split_prediction.png'))
 
 full_result.to_csv(full_result_path, index=False)
-split_result.to_csv(split_result_path, index=False)
+# split_result.to_csv(split_result_path, index=False)
