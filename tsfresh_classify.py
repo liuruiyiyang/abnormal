@@ -107,7 +107,7 @@ KPI_LIST_test, KPI_ID_test = SplitKPIList(test_data_raw)
 
 KPI_ID_e = ['07927a9a18fa19ae', '76f4550c43334374']
 
-for KPI_ID_name in KPI_ID_e:
+for KPI_ID_name in KPI_ID:
 
     print("current KPI ID:", KPI_ID_name)
 
