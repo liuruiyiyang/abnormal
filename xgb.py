@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 import os
 
 # reproducibility
-seed = 123
+seed = 321
 
 def split_data(x, y, split):
     x_train_split = x[:int(len(x) * split)]
@@ -55,7 +55,7 @@ def get_result(ts_KPI_ID_test, ts_timestamp, predict):
     ts_timestamp = pd.DataFrame(ts_timestamp).reset_index(drop=True)
     ts_timestamp.insert(loc=0, column='KPI ID', value=ts_KPI_ID_test)
     ts_timestamp.insert(loc=2, column='predict', value=predict)
-    print(ts_timestamp)
+    # print(ts_timestamp)
     return ts_timestamp
 
 
@@ -67,7 +67,7 @@ def save(result_path, ts_result):
         ts_result.to_csv(result_path, header=True, index=False)
 
 
-window = 6
+window = 8
 # score_threshold = 0.997
 # KPI_ID_name = '76f4550c43334374' 8a20c229e9860d0c
 train_data_path = 'resources/train.csv'
@@ -115,7 +115,7 @@ KPI_LIST_test, KPI_ID_test = SplitKPIList(test_data_raw)
 
 KPI_ID_e = ['07927a9a18fa19ae', '76f4550c43334374']
 
-for KPI_ID_name in KPI_ID_e:
+for KPI_ID_name in KPI_ID:
 
     print("current KPI ID:", KPI_ID_name)
 
@@ -139,7 +139,7 @@ for KPI_ID_name in KPI_ID_e:
     print("ts_KPI_ID:\n", ts_KPI_ID.iloc[[0]])
 
     pd.set_option('mode.use_inf_as_na', True)
-    sc = MinMaxScaler()
+    # sc = MinMaxScaler()
 
     if os.path.isfile("resources/ts_feature_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv"):
         X_train_df = pd.read_csv("resources/ts_feature_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
@@ -147,11 +147,11 @@ for KPI_ID_name in KPI_ID_e:
         del head_df['id']
         filtered_feature_name_list = head_df.columns.values.tolist()
         # print("filtered_feature_name_list:", filtered_feature_name_list)
-        print("filtered_feature_name_list length:", len(filtered_feature_name_list))
+        # print("filtered_feature_name_list length:", len(filtered_feature_name_list))
         del X_train_df['id']
         X_train = X_train_df.values
-        sc.fit(X_train)
-        X_train = sc.transform(X_train)
+        # sc.fit(X_train)
+        # X_train = sc.transform(X_train)
     else:
         augment_data = pd.DataFrame()
         if os.path.isfile(augment_data_path + "augment_data_window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv"):
@@ -168,7 +168,7 @@ for KPI_ID_name in KPI_ID_e:
                 index=False
             )
 
-        print("augment_data:\n", augment_data)
+        # print("augment_data:\n", augment_data)
         ts_feature = extract_relevant_features(augment_data, y, column_id="KPI ID", column_sort="timestamp")
         ts_feature.dropna(axis=1, inplace=True)
         ts_feature = pd.DataFrame(ts_feature)
@@ -176,19 +176,21 @@ for KPI_ID_name in KPI_ID_e:
         feature_name_list_df.to_csv("resources/ts_feature_with_head_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
         filtered_feature_name_list = ts_feature.columns.values.tolist()
         # print("filtered_feature_name_list:", filtered_feature_name_list)
-        print("filtered_feature_name_list length:", len(filtered_feature_name_list))
+        # print("filtered_feature_name_list length:", len(filtered_feature_name_list))
         # ts_feature.to_csv("resources/ts_feature_with_head_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
         ts_feature.to_csv("resources/ts_feature_window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv")
         X_train = ts_feature.values
-        sc.fit(X_train)
-        X_train = sc.transform(X_train)
+        # sc.fit(X_train)
+        # X_train = sc.transform(X_train)
         # X_train_df = pd.DataFrame(X_train)
         # X_train_df.to_csv("resources/ts_feature_" + "window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv")
 
     # y_train = y.values
     y_train_shift = y_shift.values
 
-    X_train, X_test, y_train, y_test = train_test_split(X_train, y_train_shift, test_size=0.33, stratify=y_train_shift, random_state=seed)
+    # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train_shift, test_size=0.33, stratify=y_train_shift, random_state=seed)
+
+    y_train = y_train_shift
 
     print("X_train shape:")
     print(X_train.shape)
@@ -201,14 +203,14 @@ for KPI_ID_name in KPI_ID_e:
     # y_train_shift_ = y_train_shift
 
     dtrain = xgb.DMatrix(X_train, label=y_train)
-    dtest = xgb.DMatrix(X_test)
+    # dtest = xgb.DMatrix(X_test)
 
     params = {
         'objective': 'binary:logistic',
-        'max_depth': 50,
+        'max_depth': 5,
         'silent': 1,
         'eta': 5,
-        'learning_rate': 0.1,
+        'learning_rate': 0.19,
         'n_estimators': 100000
     }
 
@@ -217,17 +219,18 @@ for KPI_ID_name in KPI_ID_e:
     train_labels = dtrain.get_label()
 
     ratio = float(np.sum(train_labels == 0)) / np.sum(train_labels == 1)
+    # print("ratio:", ratio)
     params['scale_pos_weight'] = ratio
 
     bst = xgb.train(params, dtrain, num_rounds)
-    y_test_preds = (bst.predict(dtest) > 0.5).astype('int')
-    print(confusion_matrix(y_test, y_test_preds))
-
-    print('Accuracy: {0:.4f}'.format(accuracy_score(y_test, y_test_preds)))
-    print('Precision: {0:.4f}'.format(precision_score(y_test, y_test_preds)))
-    print('Recall: {0:.4f}'.format(recall_score(y_test, y_test_preds)))
-    print('f1: {0:.4f}'.format(f1_score(y_test, y_test_preds)))
-    print('roc_auc_score: {0:.4f}'.format(roc_auc_score(y_test, y_test_preds)))
+    # y_test_preds = (bst.predict(dtest) > 0.5).astype('int')
+    # print(confusion_matrix(y_test, y_test_preds))
+    #
+    # print('Accuracy: {0:.4f}'.format(accuracy_score(y_test, y_test_preds)))
+    # print('Precision: {0:.4f}'.format(precision_score(y_test, y_test_preds)))
+    # print('Recall: {0:.4f}'.format(recall_score(y_test, y_test_preds)))
+    # print('f1: {0:.4f}'.format(f1_score(y_test, y_test_preds)))
+    # print('roc_auc_score: {0:.4f}'.format(roc_auc_score(y_test, y_test_preds)))
 
     # while score < score_threshold:
     #     X_train, X_test, y_train, y_test = train_test_split(X_train_, y_train_, test_size=.3)
@@ -260,7 +263,7 @@ for KPI_ID_name in KPI_ID_e:
         X_train_df = pd.read_csv("resources/test_feature/ts_feature_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
         del X_train_df['id']
         X_train = X_train_df.values
-        X_train = sc.transform(X_train)
+        # X_train = sc.transform(X_train)
     else:
         augment_data = pd.DataFrame()
         if os.path.isfile(test_augment_data_path + "test_augment_data_window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv"):
@@ -276,7 +279,7 @@ for KPI_ID_name in KPI_ID_e:
                 test_augment_data_path + "test_augment_data_window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv",
                 index=False
             )
-        print("augment_test_data:\n", augment_data)
+        # print("augment_test_data:\n", augment_data)
         ts_feature = extract_features(augment_data, column_id="KPI ID", column_sort="timestamp")
         ts_feature = pd.DataFrame(ts_feature)
         ts_feature = ts_feature[filtered_feature_name_list]
@@ -284,7 +287,7 @@ for KPI_ID_name in KPI_ID_e:
         # ts_feature.to_csv("resources/ts_feature_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
         ts_feature.to_csv("resources/test_feature/ts_feature_window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv")
         X_train = ts_feature.values
-        X_train = sc.transform(X_train)
+        # X_train = sc.transform(X_train)
         # X_train_df = pd.DataFrame(X_train)
         # X_train_df.to_csv("resources/test_feature/ts_feature_window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv")
 
@@ -299,7 +302,7 @@ for KPI_ID_name in KPI_ID_e:
     # full_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, full_predict)
     xgb_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, xgb_predict)
     print("xgb_ts_result:", ts_KPI_ID_test.iloc[[0]])
-    print(xgb_ts_result)
+    # print(xgb_ts_result)
     # split_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, split_predict)
 
     save(result_path=xgb_result_path, ts_result=xgb_ts_result)
