@@ -1,5 +1,13 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+import heapq
+import xgboost as xgb
+from sklearn import metrics
+from sklearn.datasets import make_classification
+from sklearn.metrics import accuracy_score,roc_auc_score,precision_score, recall_score,f1_score,confusion_matrix
+from sklearn.cross_validation import train_test_split
+from xgboost import XGBClassifier
+from sklearn.model_selection import StratifiedKFold
 from utils import  ReadDatatime, SplitKPIList, plot_ts_label
 from tsfresh import extract_features
 from tsfresh import select_features
@@ -8,13 +16,13 @@ from tsfresh import extract_relevant_features
 from sklearn.tree import DecisionTreeClassifier
 # from sklearn.cross_validation import train_test_split
 from sklearn.metrics import classification_report
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 # import matplotlib
 import matplotlib.pyplot as plt
 import os
 
-# matplotlib.use('Agg')
-
+# reproducibility
+seed = 123
 
 def split_data(x, y, split):
     x_train_split = x[:int(len(x) * split)]
@@ -67,7 +75,7 @@ test_data_path = 'resources/test.csv'
 augment_data_path = 'resources/augment_data/'
 test_augment_data_path = 'resources/test_augment_data/'
 full_result_path = 'resources/result/prediction.csv'
-split_result_path = 'resources/result_split/prediction.csv'
+xgb_result_path = 'resources/result_xgb/xgb_prediction.csv'
 output_path = 'resources/label_prediction_plot'
 test_data_raw = pd.read_csv(test_data_path)
 train_data_raw = pd.read_csv(train_data_path)
@@ -131,15 +139,15 @@ for KPI_ID_name in KPI_ID:
     print("ts_KPI_ID:\n", ts_KPI_ID.iloc[[0]])
 
     pd.set_option('mode.use_inf_as_na', True)
-    sc = StandardScaler()
+    sc = MinMaxScaler()
 
     if os.path.isfile("resources/ts_feature_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv"):
         X_train_df = pd.read_csv("resources/ts_feature_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
         head_df = pd.read_csv("resources/ts_feature_with_head_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
         del head_df['id']
         filtered_feature_name_list = head_df.columns.values.tolist()
-        print("filtered_feature_name_list:", filtered_feature_name_list)
-        print(len(filtered_feature_name_list))
+        # print("filtered_feature_name_list:", filtered_feature_name_list)
+        print("filtered_feature_name_list length:", len(filtered_feature_name_list))
         del X_train_df['id']
         X_train = X_train_df.values
         sc.fit(X_train)
@@ -167,8 +175,8 @@ for KPI_ID_name in KPI_ID:
         feature_name_list_df = pd.DataFrame(ts_feature.iloc[[0]])
         feature_name_list_df.to_csv("resources/ts_feature_with_head_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
         filtered_feature_name_list = ts_feature.columns.values.tolist()
-        print("filtered_feature_name_list:", filtered_feature_name_list)
-        print(len(filtered_feature_name_list))
+        # print("filtered_feature_name_list:", filtered_feature_name_list)
+        print("filtered_feature_name_list length:", len(filtered_feature_name_list))
         # ts_feature.to_csv("resources/ts_feature_with_head_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
         ts_feature.to_csv("resources/ts_feature_window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv")
         X_train = ts_feature.values
@@ -177,27 +185,49 @@ for KPI_ID_name in KPI_ID:
         # X_train_df = pd.DataFrame(X_train)
         # X_train_df.to_csv("resources/ts_feature_" + "window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv")
 
-    y_train = y.values
+    # y_train = y.values
     y_train_shift = y_shift.values
 
-    # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=.3)
-
-    # X_train, X_test, y_train, y_test = split_data(X_train, y_train, split=0.6)
+    X_train, X_test, y_train, y_test = train_test_split(X_train, y_train_shift, test_size=0.33, stratify=y_train_shift, random_state=seed)
 
     print("X_train shape:")
     print(X_train.shape)
     print("y_train length:")
     print(len(y_train))
 
-    X_train_ = X_train
-    y_train_ = y_train
+    # X_train_ = X_train
+    # y_train_ = y_train
 
-    y_train_shift_ = y_train_shift
+    # y_train_shift_ = y_train_shift
 
-    score = 0
-    # cl_split = DecisionTreeClassifier()
-    cl_full = DecisionTreeClassifier()
-    cl_shift = DecisionTreeClassifier()
+    dtrain = xgb.DMatrix(X_train, label=y_train)
+    dtest = xgb.DMatrix(X_test)
+
+    params = {
+        'objective': 'binary:logistic',
+        'max_depth': 50,
+        'silent': 1,
+        'eta': 5,
+        'learning_rate': 0.3,
+        'n_estimators': 100000
+    }
+
+    num_rounds = 50
+
+    train_labels = dtrain.get_label()
+
+    ratio = float(np.sum(train_labels == 0)) / np.sum(train_labels == 1)
+    params['scale_pos_weight'] = ratio
+
+    bst = xgb.train(params, dtrain, num_rounds)
+    y_test_preds = (bst.predict(dtest) > 0.5).astype('int')
+    print(confusion_matrix(y_test, y_test_preds))
+
+    print('Accuracy: {0:.4f}'.format(accuracy_score(y_test, y_test_preds)))
+    print('Precision: {0:.4f}'.format(precision_score(y_test, y_test_preds)))
+    print('Recall: {0:.4f}'.format(recall_score(y_test, y_test_preds)))
+    print('f1: {0:.4f}'.format(f1_score(y_test, y_test_preds)))
+    print('roc_auc_score: {0:.4f}'.format(roc_auc_score(y_test, y_test_preds)))
 
     # while score < score_threshold:
     #     X_train, X_test, y_train, y_test = train_test_split(X_train_, y_train_, test_size=.3)
@@ -208,8 +238,7 @@ for KPI_ID_name in KPI_ID:
    #     print(cl_split.score(X_test, y_test))
     #     print(classification_report(y_test, prediction))
 
-    cl_full.fit(X_train_, y_train_)
-    cl_shift.fit(X_train_, y_train_shift_)
+
 
     # prediction = cl_split.predict(X_train_)
     # print(cl_split.score(X_train_, y_train_))
@@ -261,17 +290,19 @@ for KPI_ID_name in KPI_ID:
 
     print("X_train.shape:", X_train.shape)
 
-    full_predict = padding_y(cl_full.predict(X_train), window)
-    shift_predict = padding_shift_y(cl_shift.predict(X_train), window)
+    dtest = xgb.DMatrix(X_train)
+    y_test_preds = (bst.predict(dtest) > 0.5).astype('int')
+
+    xgb_predict = padding_shift_y(y_test_preds, window)
+    # shift_predict = padding_shift_y(cl_shift.predict(X_train), window)
     # split_predict = padding_y(cl_split.predict(X_train), window)
-    full_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, full_predict)
-    shift_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, shift_predict)
-    print("full_ts_result:", ts_KPI_ID_test.iloc[[0]])
-    print(full_ts_result)
+    # full_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, full_predict)
+    xgb_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, xgb_predict)
+    print("xgb_ts_result:", ts_KPI_ID_test.iloc[[0]])
+    print(xgb_ts_result)
     # split_ts_result = get_result(ts_KPI_ID_test, ts_timestamp, split_predict)
 
-    save(result_path=full_result_path, ts_result=full_ts_result)
-    save(result_path=split_result_path, ts_result=shift_ts_result)
+    save(result_path=xgb_result_path, ts_result=xgb_ts_result)
 
     # fig2, axes = plt.subplots(nrows=2, ncols=1)
     # pd.DataFrame(full_predict).plot(ax=axes[0]);axes[0].set_title('full predict')
@@ -279,4 +310,5 @@ for KPI_ID_name in KPI_ID:
     # plt.savefig(os.path.join(output_path, KPI_ID[index] + '_full_split_prediction.png'))
 
 print("finish !!!")
+
 
