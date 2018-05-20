@@ -249,7 +249,7 @@ for KPI_ID_name in KPI_ID:
         'objective': 'binary:logistic',
         'max_depth': 5,
         'silent': 1,
-        'eta': 5,
+        'eta': 0.3,
         'learning_rate': 0.19,
         'n_estimators': 100000
     }

@@ -136,7 +136,7 @@ test_data_path = 'resources/test.csv'
 augment_data_path = 'resources/augment_data/'
 test_augment_data_path = 'resources/test_augment_data/'
 full_result_path = 'resources/result/prediction.csv'
-xgb_result_path = 'resources/result_xgb/merge_man_xgb_prediction.csv'
+xgb_result_path = 'resources/result_xgb/lstm_man_xgb_prediction.csv'
 output_path = 'resources/label_prediction_plot'
 manual_features_path = 'resources/manual_feature'
 test_data_raw = pd.read_csv(test_data_path)
@@ -248,7 +248,7 @@ for KPI_ID_name in KPI_ID:
         'objective': 'binary:logistic',
         'max_depth': 5,
         'silent': 1,
-        'eta': 5,
+        'eta': 0.2,
         'learning_rate': 0.19,
         'n_estimators': 100000
     }
