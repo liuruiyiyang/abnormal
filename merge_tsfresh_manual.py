@@ -192,7 +192,7 @@ for KPI_ID_name in KPI_ID:
 
     # print("y length:", len(y_shift))
     # y_shift = y_shift.values[int(window/2):len(y_shift)-int(window/2)]
-    y_shift = y_shift.values
+    y_shift = y_shift.values[int(window / 2):len(y_shift) - int(window / 2)]
     # print("y_shift length:", len(y_shift))
     y_shift = pd.Series(y_shift)
 
@@ -204,7 +204,8 @@ for KPI_ID_name in KPI_ID:
     lstm_diff_train, lstm_diff_test = get_lstm_diff(KPI_ID_name)
     manual_feature_df['lstm_diff'] = lstm_diff_train
 
-    manual_feature_df.drop(range(window), inplace=True)
+    manual_feature_df.drop(range(int(window/2)), inplace=True)
+    manual_feature_df.drop(range(len(manual_feature_df) - int(window / 2), len(manual_feature_df)), inplace=True)
     manual_feature_df = manual_feature_df.reset_index(drop=True)
     ts_KPI_ID = KPI_LIST[index].pop('KPI ID')
     print("ts_KPI_ID:\n", ts_KPI_ID.iloc[[0]])
@@ -278,7 +279,9 @@ for KPI_ID_name in KPI_ID:
 
     test_manual_feature = get_manual_feature(KPI_LIST_test[index])
     test_manual_feature['lstm_diff'] = lstm_diff_test
-    test_manual_feature.drop(range(window), inplace=True)
+
+    test_manual_feature.drop(range(int(window / 2)), inplace=True)
+    test_manual_feature.drop(range(len(manual_feature_df) - int(window / 2), len(manual_feature_df)), inplace=True)
     test_manual_feature = test_manual_feature.reset_index(drop=True)
 
     ts_KPI_ID_test = KPI_LIST_test[index].pop('KPI ID')
@@ -290,13 +293,12 @@ for KPI_ID_name in KPI_ID:
     X_train_df = pd.concat([X_train_df, test_manual_feature], axis=1)
     X_train = X_train_df.values
 
-
     print("X_train.shape:", X_train.shape)
 
     dtest = xgb.DMatrix(X_train)
     y_test_preds = (bst.predict(dtest) > 0.5).astype('int')
 
-    xgb_predict = y_test_preds
+    xgb_predict = padding_shift_y(y_test_preds, window)
     # xgb_predict = padding_shift_y(y_test_preds, window)
     # shift_predict = padding_shift_y(cl_shift.predict(X_train), window)
     # split_predict = padding_y(cl_split.predict(X_train), window)
