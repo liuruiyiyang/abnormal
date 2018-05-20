@@ -9,7 +9,7 @@ from sklearn.cross_validation import train_test_split
 from xgboost import XGBClassifier
 from sklearn.model_selection import StratifiedKFold
 from utils import  ReadDatatime, SplitKPIList, plot_ts_label
-from lstm import get_lstm_diff
+# from lstm import get_lstm_diff
 import os
 
 # reproducibility
@@ -128,7 +128,7 @@ def get_manual_feature(ts_df):
 
 
 
-window = 6
+window = 8
 # score_threshold = 0.997
 # KPI_ID_name = '76f4550c43334374' 8a20c229e9860d0c
 train_data_path = 'resources/train.csv'
@@ -136,7 +136,7 @@ test_data_path = 'resources/test.csv'
 augment_data_path = 'resources/augment_data/'
 test_augment_data_path = 'resources/test_augment_data/'
 full_result_path = 'resources/result/prediction.csv'
-xgb_result_path = 'resources/result_xgb/man_xgb_prediction.csv'
+xgb_result_path = 'resources/result_xgb/merge_man_xgb_prediction.csv'
 output_path = 'resources/label_prediction_plot'
 manual_features_path = 'resources/manual_feature'
 test_data_raw = pd.read_csv(test_data_path)
@@ -177,7 +177,7 @@ KPI_LIST_test, KPI_ID_test = SplitKPIList(test_data_raw)
 
 KPI_ID_e = ['07927a9a18fa19ae', '76f4550c43334374']
 
-for KPI_ID_name in KPI_ID_e:
+for KPI_ID_name in KPI_ID:
 
     print("current KPI ID:", KPI_ID_name)
 
@@ -201,32 +201,21 @@ for KPI_ID_name in KPI_ID_e:
     # calculate manual features
 
     manual_feature_df = get_manual_feature(KPI_LIST[index])
-    lstm_diff_train, lstm_diff_test = get_lstm_diff(KPI_ID_name)
-    manual_feature_df['lstm_diff'] = lstm_diff_train
+    # lstm_diff_train, lstm_diff_test = get_lstm_diff(KPI_ID_name)
+    # manual_feature_df['lstm_diff'] = lstm_diff_train
 
-    print("manual_feature_df with lstm added:\n", manual_feature_df)
-
-    print("lstm_diff_test:", lstm_diff_test)
-
-    # print(range(window))
-    # manual_features.drop(range(window), inplace=True)
-    # print("manual_features:", manual_features)
-
-    # for i in range(window, len(KPI_LIST[index])):
-    #     ts_point_value = KPI_LIST[index][i]['value']
-    #
-    #     ts_slice = pd.DataFrame(ts_slice)
-    #     ts_slice['KPI ID'] = i - window
-    #     augment_data = augment_data.append(ts_slice, ignore_index=True)
-    #     print(i, "in", len(KPI_LIST[index]), float('%.2f' % (i / len(KPI_LIST[index]) * 100)), "%")
-    # augment_data.to_csv(
-    #     augment_data_path + "augment_data_window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv",
-    #     index=False
-    # )
-
+    manual_feature_df.drop(range(window), inplace=True)
+    manual_feature_df = manual_feature_df.reset_index(drop=True)
     ts_KPI_ID = KPI_LIST[index].pop('KPI ID')
     print("ts_KPI_ID:\n", ts_KPI_ID.iloc[[0]])
 
+    X_train_df = pd.read_csv("resources/ts_feature_" + "window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv")
+
+    del X_train_df['id']
+
+    X_train_df = pd.concat([X_train_df, manual_feature_df], axis=1)
+
+    X_train = X_train_df.values
 #    pd.set_option('mode.use_inf_as_na', True)
     # sc = MinMaxScaler()
     # ts_X_train_df = pd.read_csv("resources/ts_feature_"+"window_"+str(window)+"_KPI_"+KPI_ID_name+".csv")
@@ -234,12 +223,10 @@ for KPI_ID_name in KPI_ID_e:
     # del ts_X_train_df['id']
     # ts_X_train = ts_X_train_df.values
 
-    X_train = manual_feature_df.values
     y_train_shift = y_shift.values
 
-    X_train, X_test, y_train, y_test = train_test_split(X_train, y_train_shift, test_size=0.33, stratify=y_train_shift, random_state=seed)
+    # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train_shift, test_size=0.33, stratify=y_train_shift, random_state=seed)
 
-    X_train = manual_feature_df.values
     y_train = y_train_shift
 
     print("X_train shape:")
@@ -251,10 +238,10 @@ for KPI_ID_name in KPI_ID_e:
     # y_train_ = y_train
 
     # y_train_shift_ = y_train_shift
-
-    print(len(X_train),len(y_train))
+    print("len(X_train), len(y_train):")
+    print(len(X_train), len(y_train))
     dtrain = xgb.DMatrix(X_train, label=y_train)
-    dtest = xgb.DMatrix(X_test)
+    # dtest = xgb.DMatrix(X_test)
 
     params = {
         'objective': 'binary:logistic',
@@ -274,14 +261,14 @@ for KPI_ID_name in KPI_ID_e:
     params['scale_pos_weight'] = ratio
 
     bst = xgb.train(params, dtrain, num_rounds)
-    y_test_preds = (bst.predict(dtest) > 0.5).astype('int')
-    print(confusion_matrix(y_test, y_test_preds))
-
-    print('Accuracy: {0:.4f}'.format(accuracy_score(y_test, y_test_preds)))
-    print('Precision: {0:.4f}'.format(precision_score(y_test, y_test_preds)))
-    print('Recall: {0:.4f}'.format(recall_score(y_test, y_test_preds)))
-    print('f1: {0:.4f}'.format(f1_score(y_test, y_test_preds)))
-    print('roc_auc_score: {0:.4f}'.format(roc_auc_score(y_test, y_test_preds)))
+    # y_test_preds = (bst.predict(dtest) > 0.5).astype('int')
+    # print(confusion_matrix(y_test, y_test_preds))
+    #
+    # print('Accuracy: {0:.4f}'.format(accuracy_score(y_test, y_test_preds)))
+    # print('Precision: {0:.4f}'.format(precision_score(y_test, y_test_preds)))
+    # print('Recall: {0:.4f}'.format(recall_score(y_test, y_test_preds)))
+    # print('f1: {0:.4f}'.format(f1_score(y_test, y_test_preds)))
+    # print('roc_auc_score: {0:.4f}'.format(roc_auc_score(y_test, y_test_preds)))
 
 
 
@@ -290,12 +277,20 @@ for KPI_ID_name in KPI_ID_e:
     index = KPI_ID_test.index(KPI_ID_name)
 
     test_manual_feature = get_manual_feature(KPI_LIST_test[index])
+    # test_manual_feature['lstm_diff'] = lstm_diff_test
+    test_manual_feature.drop(range(window), inplace=True)
+    test_manual_feature = test_manual_feature.reset_index(drop=True)
 
     ts_KPI_ID_test = KPI_LIST_test[index].pop('KPI ID')
     ts_timestamp = KPI_LIST_test[index]['timestamp']
     print("ts_KPI_ID_test:\n", ts_KPI_ID_test.iloc[[0]])
+    X_train_df = pd.read_csv(
+        "resources/test_feature/ts_feature_" + "window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv")
+    del X_train_df['id']
+    X_train_df = pd.concat([X_train_df, test_manual_feature], axis=1)
+    X_train = X_train_df.values
 
-    X_train = test_manual_feature.values
+
     print("X_train.shape:", X_train.shape)
 
     dtest = xgb.DMatrix(X_train)
