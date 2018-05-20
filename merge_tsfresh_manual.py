@@ -281,7 +281,7 @@ for KPI_ID_name in KPI_ID:
     test_manual_feature['lstm_diff'] = lstm_diff_test
 
     test_manual_feature.drop(range(int(window / 2)), inplace=True)
-    test_manual_feature.drop(range(len(manual_feature_df) - int(window / 2), len(manual_feature_df)), inplace=True)
+    test_manual_feature.drop(range(len(test_manual_feature) - int(window / 2), len(test_manual_feature)), inplace=True)
     test_manual_feature = test_manual_feature.reset_index(drop=True)
 
     ts_KPI_ID_test = KPI_LIST_test[index].pop('KPI ID')

@@ -128,7 +128,7 @@ def get_manual_feature(ts_df):
 
 
 
-window = 6
+window = 8
 # score_threshold = 0.997
 # KPI_ID_name = '76f4550c43334374' 8a20c229e9860d0c
 train_data_path = 'resources/train.csv'
@@ -177,7 +177,7 @@ KPI_LIST_test, KPI_ID_test = SplitKPIList(test_data_raw)
 
 KPI_ID_e = ['07927a9a18fa19ae', '76f4550c43334374']
 
-for KPI_ID_name in KPI_ID_e:
+for KPI_ID_name in KPI_ID:
 
     print("current KPI ID:", KPI_ID_name)
 
@@ -280,7 +280,7 @@ for KPI_ID_name in KPI_ID_e:
     test_manual_feature = get_manual_feature(KPI_LIST_test[index])
     # test_manual_feature['lstm_diff'] = lstm_diff_test
     test_manual_feature.drop(range(int(window / 2)), inplace=True)
-    test_manual_feature.drop(range(len(manual_feature_df) - int(window / 2), len(manual_feature_df)), inplace=True)
+    test_manual_feature.drop(range(len(test_manual_feature) - int(window / 2), len(test_manual_feature)), inplace=True)
     test_manual_feature = test_manual_feature.reset_index(drop=True)
 
     ts_KPI_ID_test = KPI_LIST_test[index].pop('KPI ID')
