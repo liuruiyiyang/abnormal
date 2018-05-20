@@ -187,6 +187,7 @@ def get_lstm_diff(KPI_ID_name):
 
     test_diff_df = get_diff(test_data, test_scaled_y, test_scaled_X, lstm_model, train_y_scaler)
 
+    X_reserve = X_reserve.reshape(-1, 1)
     train_scaled_X = train_X_scaler.transform(X_reserve)
 
     train_scaled_y = train_y_scaler.transform(y_reserve)

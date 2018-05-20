@@ -128,7 +128,7 @@ def get_manual_feature(ts_df):
 
 
 
-window = 8
+window = 6
 # score_threshold = 0.997
 # KPI_ID_name = '76f4550c43334374' 8a20c229e9860d0c
 train_data_path = 'resources/train.csv'
@@ -177,7 +177,7 @@ KPI_LIST_test, KPI_ID_test = SplitKPIList(test_data_raw)
 
 KPI_ID_e = ['07927a9a18fa19ae', '76f4550c43334374']
 
-for KPI_ID_name in KPI_ID:
+for KPI_ID_name in KPI_ID_e:
 
     print("current KPI ID:", KPI_ID_name)
 
