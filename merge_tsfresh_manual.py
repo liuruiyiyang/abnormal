@@ -9,6 +9,7 @@ from sklearn.cross_validation import train_test_split
 from xgboost import XGBClassifier
 from sklearn.model_selection import StratifiedKFold
 from utils import  ReadDatatime, SplitKPIList, plot_ts_label
+from read_data import get_process_f
 from lstm import get_lstm_diff
 import os
 
@@ -78,6 +79,7 @@ def boolean2int(number):
     else:
         return 0
 
+
 def get_manual_feature(ts_df):
     raw_df = pd.DataFrame(ts_df)
     raw_value = raw_df['value']
@@ -126,9 +128,7 @@ def get_manual_feature(ts_df):
     return manual_features
 
 
-
-
-window = 6
+window = 8
 # score_threshold = 0.997
 # KPI_ID_name = '76f4550c43334374' 8a20c229e9860d0c
 train_data_path = 'resources/train.csv'
@@ -136,7 +136,7 @@ test_data_path = 'resources/test.csv'
 augment_data_path = 'resources/augment_data/'
 test_augment_data_path = 'resources/test_augment_data/'
 full_result_path = 'resources/result/prediction.csv'
-xgb_result_path = 'resources/result_xgb/lstm_man_xgb_prediction.csv'
+xgb_result_path = 'resources/result_xgb/pro_man_xgb_prediction.csv'
 output_path = 'resources/label_prediction_plot'
 manual_features_path = 'resources/manual_feature'
 test_data_raw = pd.read_csv(test_data_path)
@@ -175,7 +175,9 @@ KPI_LIST_test, KPI_ID_test = SplitKPIList(test_data_raw)
 # 'a5bf5d65261d859a',
 # '9ee5879409dccef9']
 
-KPI_ID_e = ['07927a9a18fa19ae', '76f4550c43334374']
+KPI_ID_e = ['02e99bd4f6cfb33f', '046ec29ddf80d62e', '07927a9a18fa19ae', '09513ae3e75778a3', '18fbb1d5a5dc099d', '1c35dbf57f55f5e4', '40e25005ff8992bd', '54e8a140f6237526', '71595dd7171f4540', '769894baefea4e9e', '76f4550c43334374', '7c189dd36f048a6c', '88cf3a776ba00e7c', '8a20c229e9860d0c', '8bef9af9a922e0b3', '8c892e5525f3e491', '9bd90500bfd11edb', '9ee5879409dccef9', 'a40b1df87e3f1c87', 'a5bf5d65261d859a', 'affb01ca2b4f0b45', 'b3b2e6d1a791d63a', 'c58bfcbacb2822d1', 'cff6d3c01e6a6bfa', 'da403e4e3f87c9e0', 'e0770391decc44ce']
+
+# KPI_ID_e = ['07927a9a18fa19ae'] # , '76f4550c43334374'
 
 for KPI_ID_name in KPI_ID_e:
 
@@ -189,10 +191,10 @@ for KPI_ID_name in KPI_ID_e:
     y_shift = y
     y = y.values[window:]
     y = pd.Series(y)
-
+    shift = 1
     # print("y length:", len(y_shift))
     # y_shift = y_shift.values[int(window/2):len(y_shift)-int(window/2)]
-    y_shift = y_shift.values[int(window / 2):len(y_shift) - int(window / 2)]
+    y_shift = y_shift.values[int(window / 2) + shift:len(y_shift) - int(window / 2) + shift]
     # print("y_shift length:", len(y_shift))
     y_shift = pd.Series(y_shift)
 
@@ -214,8 +216,10 @@ for KPI_ID_name in KPI_ID_e:
 
     del X_train_df['id']
 
-    X_train_df = pd.concat([X_train_df, manual_feature_df], axis=1)
+    train_processd_feature = get_process_f(is_test=False, KPI_ID_name=KPI_ID_name, window=window)
 
+    X_train_df = pd.concat([X_train_df, manual_feature_df, train_processd_feature], axis=1)
+    print("X_train_df of train:\n", X_train_df)
     X_train = X_train_df.values
 #    pd.set_option('mode.use_inf_as_na', True)
     # sc = MinMaxScaler()
@@ -290,7 +294,9 @@ for KPI_ID_name in KPI_ID_e:
     X_train_df = pd.read_csv(
         "resources/test_feature/ts_feature_" + "window_" + str(window) + "_KPI_" + KPI_ID_name + ".csv")
     del X_train_df['id']
-    X_train_df = pd.concat([X_train_df, test_manual_feature], axis=1)
+    test_processd_feature = get_process_f(is_test=True, KPI_ID_name=KPI_ID_name, window=window)
+    X_train_df = pd.concat([X_train_df, test_manual_feature, test_processd_feature], axis=1)
+    print("X_train_df of test:\n", X_train_df)
     X_train = X_train_df.values
 
     print("X_train.shape:", X_train.shape)

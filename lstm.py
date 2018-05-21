@@ -14,11 +14,11 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' #Hide messy TensorFlow warnings
 warnings.filterwarnings("ignore") #Hide messy Numpy warnings
 shift_window = 1
 # 是否加载已经训练好的模型
-IS_LOAD_MODEL = False
+# IS_LOAD_MODEL = False
 nodes=10
 batch_size=1
 timestep=1
-epochs=1
+epochs=2
 
 output_path = './BasicLSTM_output'
 nb_epoch=1
@@ -173,7 +173,6 @@ def get_lstm_diff(KPI_ID_name):
 
     test_scaled_y = train_y_scaler.transform(test_label)
 
-
     pre_item = 'value'
     model_file = './BasicLSTM_output/'+KPI_ID_name+'_lstm_model.h5'
     # 加载LSTM模型
@@ -185,13 +184,13 @@ def get_lstm_diff(KPI_ID_name):
         # print('{}模型文件不存在'.format(model_file))
         # exit(0)
 
-    test_diff_df = get_diff(test_data, test_scaled_y, test_scaled_X, lstm_model, train_y_scaler)
+    test_diff_df = get_diff(test_data, test_scaled_y, test_scaled_X, lstm_model, train_y_scaler, KPI_ID_name+'test')
 
-    X_reserve = X_reserve.reshape(-1, 1)
+    # X_reserve = X_reserve.reshape(-1, 1)
     train_scaled_X = train_X_scaler.transform(X_reserve)
 
     train_scaled_y = train_y_scaler.transform(y_reserve)
-    train_diff_df = get_diff(X_train_reserve.values, train_scaled_y, train_scaled_X, lstm_model, train_y_scaler)
+    train_diff_df = get_diff(X_train_reserve.values, train_scaled_y, train_scaled_X, lstm_model, train_y_scaler, KPI_ID_name+'_train')
     return train_diff_df, test_diff_df
     # print("pred_daily_df['diff'] :", pred_daily_df['lsmt_diff'] )
 
@@ -201,7 +200,7 @@ def get_lstm_diff(KPI_ID_name):
 
     # plt.show()
 
-def get_diff(test_data, test_scaled_y, test_scaled_X, lstm_model, train_y_scaler):
+def get_diff(test_data, test_scaled_y, test_scaled_X, lstm_model, train_y_scaler, name):
     test_data = pd.DataFrame(test_data)
     test_dates = test_data.index.tolist()
     pred_daily_df = pd.DataFrame(columns=['True Value', 'Pred Value'], index=test_dates)
@@ -224,4 +223,11 @@ def get_diff(test_data, test_scaled_y, test_scaled_X, lstm_model, train_y_scaler
     # pred_daily_df.plot()
 
     pred_daily_df['test_diff'] = pred_daily_df['Pred Value'] - pred_daily_df['True Value']
+
+    # pred_daily_df.to_csv(os.path.join(output_path, 'kdd_pred_daily_df.csv'))
+    # pred_daily_df.plot()
+    # plt.savefig(os.path.join(output_path, name + '_lstm_pred_test_value.png'))
+    #
+    # plt.show()
+
     return pred_daily_df['test_diff']
