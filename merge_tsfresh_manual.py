@@ -203,8 +203,8 @@ for KPI_ID_name in KPI_ID_e:
     # calculate manual features
 
     manual_feature_df = get_manual_feature(KPI_LIST[index])
-    lstm_diff_train, lstm_diff_test = get_lstm_diff(KPI_ID_name)
-    manual_feature_df['lstm_diff'] = lstm_diff_train
+    # lstm_diff_train, lstm_diff_test = get_lstm_diff(KPI_ID_name)
+    # manual_feature_df['lstm_diff'] = lstm_diff_train
 
     manual_feature_df.drop(range(int(window/2)), inplace=True)
     manual_feature_df.drop(range(len(manual_feature_df) - int(window / 2), len(manual_feature_df)), inplace=True)
@@ -282,7 +282,7 @@ for KPI_ID_name in KPI_ID_e:
     index = KPI_ID_test.index(KPI_ID_name)
 
     test_manual_feature = get_manual_feature(KPI_LIST_test[index])
-    test_manual_feature['lstm_diff'] = lstm_diff_test
+    # test_manual_feature['lstm_diff'] = lstm_diff_test
 
     test_manual_feature.drop(range(int(window / 2)), inplace=True)
     test_manual_feature.drop(range(len(test_manual_feature) - int(window / 2), len(test_manual_feature)), inplace=True)
