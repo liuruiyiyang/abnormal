@@ -2,63 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2f9becad-90d5-4992-afd3-4b32abceb407" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/10result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/10testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/11result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/11testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/12result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/12testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/13result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/13testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/14result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/14testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/15result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/15testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/16result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/16testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/17result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/17testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/18result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/18testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/19result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/19testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/1result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/1testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/20result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/20testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/21result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/21testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/22result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/22testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/23result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/23testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/24result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/24testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/25result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/25testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/26result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/26testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/2result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/2testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/3result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/3testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/4result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/4testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/5result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/5testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/6result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/6testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/7result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/7testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/8result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/8testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/9result.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/process_data/9testresult.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/read_data.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/BasicLSTM_output/76f4550c43334374_lstm_model.h5" afterPath="$PROJECT_DIR$/BasicLSTM_output/07927a9a18fa19ae_lstm_model.h5" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lstm.py" afterPath="$PROJECT_DIR$/lstm.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/merge_tsfresh_manual.py" afterPath="$PROJECT_DIR$/merge_tsfresh_manual.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -99,11 +43,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="merge_tsfresh_manual.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="merge_tsfresh_manual.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/merge_tsfresh_manual.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="46">
-              <caret line="117" column="74" lean-forward="true" selection-start-line="117" selection-start-column="74" selection-end-line="117" selection-end-column="74" />
+            <state relative-caret-position="331">
+              <caret line="149" column="9" lean-forward="true" selection-start-line="149" selection-start-column="9" selection-end-line="149" selection-end-column="9" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -132,10 +76,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="lstm.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="lstm.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lstm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
+            <state relative-caret-position="-371">
               <caret line="174" column="0" lean-forward="false" selection-start-line="174" selection-start-column="0" selection-end-line="174" selection-end-column="0" />
               <folding />
             </state>
@@ -780,14 +724,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lstm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="174" column="0" lean-forward="false" selection-start-line="174" selection-start-column="0" selection-end-line="174" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/read_data.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="349">
@@ -798,11 +734,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/merge_tsfresh_manual.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="46">
-          <caret line="117" column="74" lean-forward="true" selection-start-line="117" selection-start-column="74" selection-end-line="117" selection-end-column="74" />
+        <state relative-caret-position="331">
+          <caret line="149" column="9" lean-forward="true" selection-start-line="149" selection-start-column="9" selection-end-line="149" selection-end-column="9" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lstm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-371">
+          <caret line="174" column="0" lean-forward="false" selection-start-line="174" selection-start-column="0" selection-end-line="174" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
